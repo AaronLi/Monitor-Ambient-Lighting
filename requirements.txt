@@ -2,3 +2,5 @@ opencv-python>=4.2.0.34
 mss>=5.1.0
 numpy>=1.18.5
 pygame>=2.0.0.dev8
+pystray>=0.16.0
+Pillow>=7.1.2

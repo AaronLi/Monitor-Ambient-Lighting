@@ -1,52 +1,39 @@
-import threading
+import pystray
+import threaded_image_grabber
+import framerate_limiter
+from PIL import Image
 
-import cv2
-import mss
-import numpy as np
-from pygame import *
+class App:
 
-sct = mss.mss()
+    def __init__(self) -> None:
+        self.grabber = threaded_image_grabber.ThreadedImageGrabber()
 
-running = True
+        self.limiter = framerate_limiter.FramerateLimiter(30)
 
-screen = display.set_mode((sct.monitors[0]['width']//2, sct.monitors[0]['height']//2))
-
-screenshot = None
-
-ready_next_frame = threading.Event()
+        menu = pystray.Menu(pystray.MenuItem("Button", lambda: print("Click")), pystray.MenuItem("Exit", self.exit_program))
+        self.icon = pystray.Icon("Ambient Lighting", Image.open('icon.png'), menu=menu)
 
 
-def grab_and_store_screenshot():
-    global screenshot, sct, running
-    while running:
-        screenshot = np.array(sct.grab(sct.monitors[0]))[:, :, :3]
-        ready_next_frame.clear()
-        ready_next_frame.wait()
+    def program_loop(self, icon):
+        icon.visible = True
+
+        self.grabber.start()
+
+        while self.grabber.is_running:
+            frame = self.grabber.pull_frame_and_request_next()
+            # process data and output to serial
+            self.limiter.tick()
 
 
-image_grabber = threading.Thread(target=grab_and_store_screenshot)
-image_grabber.start()
-clockity = time.Clock()
-while running:
-    for e in event.get():
-        if e.type == QUIT:
-            running = False
-    if screenshot is None:
-        continue
-    captured_screenshot = screenshot
-    ready_next_frame.set()
-    captured_screenshot = cv2.cvtColor(cv2.resize(captured_screenshot, (captured_screenshot.shape[1] // 64, captured_screenshot.shape[0] // 64)),
-                              cv2.COLOR_BGR2RGB)
-
-    out = captured_screenshot
+    def exit_program(self):
+        self.grabber.stop()
+        self.icon.stop()
 
 
-    out_image = transform.flip(transform.rotate(surfarray.make_surface(out), -90), True, False)
+    def run(self):
+        self.icon.run(self.program_loop)
 
-    screen.blit(transform.scale(out_image, screen.get_size()), (0, 0))
-    clockity.tick(15)
-    display.flip()
 
-    display.set_caption(f'FPS: {clockity.get_fps():.2f}')
-
-quit()
+if __name__ == '__main__':
+    app = App()
+    app.run()
