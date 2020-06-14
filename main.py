@@ -5,19 +5,21 @@ import mss
 import numpy as np
 from pygame import *
 
+sct = mss.mss()
+
 running = True
 
-screen = display.set_mode((960, 600))
+screen = display.set_mode((sct.monitors[0]['width']//2, sct.monitors[0]['height']//2))
 
 screenshot = None
 
 ready_next_frame = threading.Event()
-sct = mss.mss()
+
 
 def grab_and_store_screenshot():
     global screenshot, sct, running
     while running:
-        screenshot = np.array(sct.grab({'top':0, 'left':0, 'width':1920, 'height':1200}))[:, :, :3]
+        screenshot = np.array(sct.grab(sct.monitors[0]))[:, :, :3]
         ready_next_frame.clear()
         ready_next_frame.wait()
 
@@ -41,8 +43,8 @@ while running:
 
     out_image = transform.flip(transform.rotate(surfarray.make_surface(out), -90), True, False)
 
-    screen.blit(transform.scale(out_image, (960, 600)), (0, 0))
-    clockity.tick(10)
+    screen.blit(transform.scale(out_image, screen.get_size()), (0, 0))
+    clockity.tick(15)
     display.flip()
 
     display.set_caption(f'FPS: {clockity.get_fps():.2f}')
