@@ -1,3 +1,16 @@
 {
-  
+  "monitor_configuration": [
+    {
+      "monitor": 1,
+      "led_order": "RTLB",
+      "diagonal_size": 24.1,
+      "led_count": {
+        "right": 10,
+        "top": 15,
+        "left": 5,
+        "bottom": 15
+      },
+      "leds_per_inch": 3
+    }
+  ]
 }
