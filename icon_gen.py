@@ -2,7 +2,7 @@ from pygame import *
 import math
 display.init()
 monitor = image.load('monitor.png')
-icon = Surface((64, 64), SRCALPHA)
+icon = Surface((128, 128), SRCALPHA)
 
 for x in range(icon.get_width()):
     for y in range(icon.get_height()):

@@ -9,7 +9,7 @@ class ThreadedImageGrabber:
 
     def __init__(self) -> None:
         self.image_grabber = threading.Thread(target=self._grab_and_store_screenshot, name="Screenshot grabber")
-        self.screenshot = None
+        self.monitors = []
         self.ready_next_frame = threading.Event()
         self.__running = threading.Event()
 
@@ -27,11 +27,11 @@ class ThreadedImageGrabber:
 
     def pull_frame_and_request_next(self):
         self.ready_next_frame.set()
-        return self.screenshot
+        return self.monitors
 
     def _grab_and_store_screenshot(self):
         while self.__running.is_set():
-            self.screenshot = np.array(sct.grab(sct.monitors[0]))[:, :, :3]
+            self.monitors = [np.array(sct.grab(monitor))[:, :, :3] for monitor in sct.monitors[1:]]
             self.ready_next_frame.clear()
             self.ready_next_frame.wait(0.5)
 
