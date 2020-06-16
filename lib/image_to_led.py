@@ -58,7 +58,8 @@ class EdgeLighting:
 
         self.led_positions = []
 
-        for configuration, monitor_resolution in zip(lighting_configurations.monitor_configurations, monitor_info):
+        for configuration in lighting_configurations.monitor_configurations:
+            monitor_resolution = monitor_info[configuration.monitor_number]
             bezel_diagonal = math.hypot(configuration.bezels['top'] + configuration.bezels['bottom'],
                                         configuration.bezels['left'] + configuration.bezels['right'])
 
