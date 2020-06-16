@@ -1,7 +1,7 @@
 from pygame import *
 import math
 display.init()
-monitor = image.load('monitor.png')
+monitor = image.load('../assets/monitor.png')
 icon = Surface((128, 128), SRCALPHA)
 
 for x in range(icon.get_width()):
@@ -24,4 +24,4 @@ scaled_monitor = transform.scale(monitor, (int(icon.get_width() * 0.8), int(icon
 icon.blit(scaled_monitor, ((icon.get_width() - scaled_monitor.get_width())//2, (icon.get_height() - scaled_monitor.get_height())//2))
 
 
-image.save(icon, "icon.png")
+image.save(icon, "../assets/icon.png")

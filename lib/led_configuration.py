@@ -1,6 +1,6 @@
 import json
 class LedConfiguration:
-    def __init__(self, diagonal, led_count, monitor_number, led_order, led_density) -> None:
+    def __init__(self, diagonal, led_count, monitor_number, led_order, led_density, bezels) -> None:
         super().__init__()
 
         self.monitor_diagonal = diagonal
@@ -13,6 +13,8 @@ class LedConfiguration:
 
         self.led_density = led_density
 
+        self.bezels = bezels
+
     def __repr__(self)-> str:
         return f'Monitor Number: {self.monitor_number} '\
                f'Diagonal: {self.monitor_diagonal} ' \
@@ -22,6 +24,9 @@ class LedConfiguration:
 
 
 class LightingSetup:
+
+    def __init__(self, monitor_configurations):
+        self.monitor_configurations = monitor_configurations
 
     @staticmethod
     def load(path):
@@ -36,14 +41,15 @@ class LightingSetup:
                 diagonal_size = monitor.get('diagonal_size')
                 led_count = monitor.get('led_count')
                 leds_per_inch = monitor.get('leds_per_inch')
+                bezels = monitor.get('bezel_thickness')
 
-                config_out = LedConfiguration(diagonal_size, led_count, number, led_order, leds_per_inch)
+                config_out = LedConfiguration(diagonal_size, led_count, number, led_order, leds_per_inch, bezels)
 
                 configurations.append(config_out)
 
-        return configurations
+        return LightingSetup(configurations)
 
 if __name__ == '__main__':
-    configs = LightingSetup.load('monitor_configuration.json')
+    configs = LightingSetup.load('../monitor_configuration.json')
 
     print(configs)

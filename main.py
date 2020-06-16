@@ -1,8 +1,9 @@
+import math
+
 import pystray
 import serial
 from serial.tools import list_ports
-import threaded_image_grabber
-import framerate_limiter
+from lib import framerate_limiter, threaded_image_grabber, led_configuration, image_to_led
 from PIL import Image
 
 
@@ -16,10 +17,14 @@ class App:
 
         self.limiter = framerate_limiter.FramerateLimiter(30)
 
-        self.icon = pystray.Icon("Ambient Lighting", Image.open('icon.png'))
+        self.icon = pystray.Icon("Ambient Lighting", Image.open('assets/icon.png'))
 
         self.serial = serial.Serial()
-        self.serial.baudrate = 9600
+        self.serial.baudrate = 115200
+
+        self.config = led_configuration.LightingSetup.load("monitor_configuration.json")
+
+        self.monitor_setup = image_to_led.EdgeLighting(self.config, threaded_image_grabber.monitor_resolutions())
 
         self.update_menu()
 
@@ -136,7 +141,10 @@ class App:
         while self.grabber.is_running:
             if self.serial.is_open:
                 frames = self.grabber.pull_frame_and_request_next()
-                self.serial.write(b"Hello\n")
+
+                led_colours = self.monitor_setup.update(frames)
+
+                self.serial.write(bytearray(led_colours))
             self.limiter.tick()
 
     def exit_program(self):

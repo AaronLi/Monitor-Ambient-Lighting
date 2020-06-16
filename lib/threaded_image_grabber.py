@@ -5,6 +5,9 @@ import numpy as np
 
 sct = mss.mss()
 
+def monitor_resolutions():
+    return sct.monitors[1:]
+
 class ThreadedImageGrabber:
 
     def __init__(self) -> None:
@@ -33,6 +36,6 @@ class ThreadedImageGrabber:
         while self.__running.is_set():
             self.monitors = [np.array(sct.grab(monitor))[:, :, :3] for monitor in sct.monitors[1:]]
             self.ready_next_frame.clear()
-            self.ready_next_frame.wait(0.5)
+            self.ready_next_frame.wait(timeout=0.5)
 
 

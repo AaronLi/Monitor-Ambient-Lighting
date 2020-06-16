@@ -1,7 +1,7 @@
 import cv2
 from pygame import *
 
-from threaded_image_grabber import sct, ThreadedImageGrabber
+from lib.threaded_image_grabber import sct, ThreadedImageGrabber
 print(sct.monitors)
 screen = display.set_mode((sct.monitors[0]['width'] // 2, sct.monitors[0]['height'] // 2))
 
