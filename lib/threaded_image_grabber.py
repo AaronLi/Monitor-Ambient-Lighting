@@ -6,7 +6,7 @@ import numpy as np
 sct = mss.mss()
 
 def monitor_resolutions():
-    return sct.monitors[1:]
+    return sct.monitors
 
 class ThreadedImageGrabber:
 
