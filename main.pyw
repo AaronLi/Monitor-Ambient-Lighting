@@ -1,4 +1,4 @@
-import math
+import asyncio
 
 import pystray
 import serial
@@ -84,6 +84,10 @@ class App:
             self.update_menu()
 
     def stop_communication(self):
+        """
+        Closes the serial communication and updates the menu to reflect that
+        :return: None
+        """
         self.serial.close()
         self.update_menu()
 
@@ -140,6 +144,7 @@ class App:
 
         while self.grabber.is_running:
             if self.serial.is_open:
+
                 frames = self.grabber.pull_frame_and_request_next()
 
                 led_colours = self.monitor_setup.update(frames)
@@ -152,10 +157,9 @@ class App:
         self.stop_communication()
         self.icon.stop()
 
-    def run(self):
+    async def run(self):
         self.icon.run(self.program_loop)
 
 
 if __name__ == '__main__':
-    app = App()
-    app.run()
+    asyncio.run(App().run())
